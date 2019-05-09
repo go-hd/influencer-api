@@ -16,6 +16,8 @@ class CreateInstagramAccountsTable extends Migration
         Schema::create('instagram_accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
+            $table->string('name');
+            $table->string('label');
             $table->unsignedBigInteger('ig_business_id');
             $table->string('page_access_token');
             $table->timestamps();
