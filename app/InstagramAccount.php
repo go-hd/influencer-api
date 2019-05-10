@@ -14,6 +14,23 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount query()
  * @mixin \Eloquent
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string $label
+ * @property int $ig_business_id
+ * @property string $page_access_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereIgBusinessId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount wherePageAccessToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereUserId($value)
  */
 class InstagramAccount extends Model
 {
