@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\InstagramAccount;
+
 class HomeController extends Controller
 {
     /**
@@ -21,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $instagramAccounts = InstagramAccount::whereUserId(\Auth::user()->id)->get();
+
+        return view('home', compact('instagramAccounts'));
     }
 }
