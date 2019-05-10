@@ -67,6 +67,7 @@ class InstagramAccount extends Model
     public function updateMedia(): bool
     {
         $timestamp = date('Y-m-d H:i:s');
+        $this->media()->delete();
 
         // Fetch data and add instagram_account_id and timestamp.
         $data = $this->getCurrentMedia(['media_url', 'caption', 'permalink'])
@@ -81,7 +82,7 @@ class InstagramAccount extends Model
                 return $media;
             })->toArray();
 
-        return Media::insert($data);
+        return $this->media()->insert($data);
     }
 
     /**
