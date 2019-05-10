@@ -7,11 +7,12 @@ services:
     volumes:
     - '.:/var/www/html:cached'
     - './docker/web/php.ini:/usr/local/etc/php/php.ini'
-  debug:
+  cron:
     build: './docker/web'
     volumes:
     - '.:/var/www/html:cached'
     - './docker/web/php.ini:/usr/local/etc/php/php.ini'
+    command: "cron -f"
   mysql:
     image: mysql:5
     ports:

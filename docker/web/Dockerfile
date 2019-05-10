@@ -16,4 +16,3 @@ COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2ensite 000-default.conf
 
 RUN echo '* * * * * root cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1' >> /etc/crontab
-CMD ["cron", "-f"]
