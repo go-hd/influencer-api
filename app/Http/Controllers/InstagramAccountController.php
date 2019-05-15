@@ -108,7 +108,7 @@ class InstagramAccountController extends Controller
             \Session::flash('message', "Instagramアカウントの更新に失敗しました。");
         }
 
-        return redirect()->route('home');
+        return redirect()->back();
     }
 
     /**
@@ -158,6 +158,6 @@ class InstagramAccountController extends Controller
             \Session::flash('message', "最新のポストの取得に失敗しました。");
         }
 
-        return redirect()->route('home');
+        return redirect()->back();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 use App\InstagramAccount;
-use App\Media;
+use App\Medium;
 use App\User;
 use Illuminate\Database\Seeder;
 
@@ -54,12 +54,12 @@ class DatabaseSeeder extends Seeder
      * Create fake data of media.
      *
      * @param int $instagramAccountId
-     * @return \App\Media[]
+     * @return \App\Medium[]
      * @throws \Exception
      */
     protected function mediaFactory(int $instagramAccountId)
     {
-        return factory(Media::class, random_int(10, 20))->create([
+        return factory(Medium::class, random_int(10, 20))->create([
             'instagram_account_id' => $instagramAccountId,
         ]);
     }

@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
@@ -22,7 +23,7 @@ use Illuminate\Support\Collection;
  * @property string $page_access_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Medium[] $media
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereIgBusinessId($value)
@@ -31,6 +32,7 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount wherePageAccessToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InstagramAccount whereUserId($value)
+ * @property-read \App\User $user
  */
 class InstagramAccount extends Model
 {
@@ -73,7 +75,17 @@ class InstagramAccount extends Model
      */
     public function media(): HasMany
     {
-        return $this->hasMany(Media::class);
+        return $this->hasMany(Medium::class);
+    }
+
+    /**
+     * Get the user this account belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -84,19 +96,23 @@ class InstagramAccount extends Model
     public function updateMedia(): bool
     {
         $timestamp = date('Y-m-d H:i:s');
+        $omittedMedia = $this->media()->where('omit', true)->get()
+            ->map(function (Medium $medium) {return $medium['media_id'];});
+
         $this->media()->delete();
 
         // Fetch data and add instagram_account_id and timestamp.
         $data = $this->getCurrentMedia(['media_url', 'caption', 'permalink'])
-            ->map(function (array $media) use ($timestamp) {
-                $media['instagram_account_id'] = $this->id;
-                $media['media_id'] = $media['id'];
-                $media['created_at'] = $timestamp;
-                $media['updated_at'] = $timestamp;
+            ->map(function (array $medium) use ($timestamp, $omittedMedia) {
+                $medium['instagram_account_id'] = $this->id;
+                $medium['media_id'] = $medium['id'];
+                $medium['omit'] = $omittedMedia->contains($medium['media_id']);
+                $medium['created_at'] = $timestamp;
+                $medium['updated_at'] = $timestamp;
 
-                unset($media['id']);
+                unset($medium['id']);
 
-                return $media;
+                return $medium;
             })->toArray();
 
         return $this->media()->insert($data);

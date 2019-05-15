@@ -16,7 +16,7 @@
                            title="新しいInstagramアカウントを追加します"
                            href="{{ route('instagram_account.create') }}"
                         >
-                            Instagramアカウントを追加
+                            <i class="fab fa-instagram mr-1"></i>アカウントを追加
                         </a>
                         @if (!$instagramAccounts->count())
                             <div class="mt-3">
@@ -50,19 +50,22 @@
                                         <td>
                                             <a
                                                 href="{{ route('instagram_account.edit', ['instagram_account' => $instagramAccount->id]) }}"
-                                                class="btn btn-sm btn-secondary">
-                                                編集
+                                                class="btn btn-sm btn-secondary"
+                                                title="編集">
+                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <form class="d-inline-block" method="post"
                                                   action="{{ route('instagram_account.update_media', ['instagram_account' => $instagramAccount->id]) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    更新
+                                                <button type="submit" class="btn btn-sm btn-success" title="最新の投稿と同期">
+                                                    <i class="fas fa-sync-alt"></i>
                                                 </button>
                                             </form>
-                                            <button class="btn btn-sm btn-danger" data-toggle="modal"
-                                                    data-target="#deleteConfirmModal_{{ $instagramAccount->id }}">
-                                                削除
+                                            <button class="btn btn-sm btn-danger"
+                                                    data-toggle="modal"
+                                                    data-target="#deleteConfirmModal_{{ $instagramAccount->id }}"
+                                                    title="削除">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                             <div class="modal fade" id="deleteConfirmModal_{{ $instagramAccount->id }}"
                                                  tabindex="-1" role="dialog"

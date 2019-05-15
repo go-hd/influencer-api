@@ -70,7 +70,8 @@
                             <textarea id="page_access_token"
                                       class="form-control @error('page_access_token') is-invalid @enderror"
                                       rows="5" name="page_access_token"
-                                      required autocomplete="page_access_token">{{ old('page_access_token') }}</textarea>
+                                      required
+                                      autocomplete="page_access_token">{{ old('page_access_token') }}</textarea>
 
                                     @error('page_access_token')
                                     <span class="invalid-feedback" role="alert">

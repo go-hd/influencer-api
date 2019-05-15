@@ -17,12 +17,24 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get(
+    '/home',
+    'HomeController@index'
+)->name('home');
 
-Route::resource('instagram_account', 'InstagramAccountController')
-    ->only(['create', 'store', 'edit', 'update', 'destroy']);
+Route::resource(
+    'instagram_account',
+    'InstagramAccountController'
+)->only(['create', 'store', 'edit', 'update', 'destroy']);
 
-Route::post('instagram_account/{instagram_account}/update_media', 'InstagramAccountController@updateMedia')
-    ->name('instagram_account.update_media');
+Route::post(
+    '/instagram_account/{instagram_account}/update_media',
+    'InstagramAccountController@updateMedia'
+)->name('instagram_account.update_media');
 
-Route::get('media/{user}/{label}', 'MediaController@index');
+Route::resource(
+    'medium',
+    'MediumController'
+)->only(['update']);
+
+// Route::get('media/{user}/{label}', 'MediumController@index');
