@@ -115,7 +115,7 @@
                         <div class="mt-3">
                             @if($instagramAccount->media->count())
                                 最終更新日時：<span
-                                    class="font-weight-bold">{{ $instagramAccount->media->first()->updated_at }}</span>
+                                    class="font-weight-bold">{{ $instagramAccount->media->first()->created_at }}</span>
                             @endif
                         </div>
                     </div>

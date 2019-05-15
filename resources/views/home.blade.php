@@ -46,7 +46,7 @@
                                         <td>{{ $instagramAccount->label }}</td>
                                         <td>{{ $instagramAccount->ig_business_id }}</td>
                                         <td>{{ $instagramAccount->media()->count() }}</td>
-                                        <td>{{ $instagramAccount->media()->count() ? $instagramAccount->media()->first()->updated_at : '' }}</td>
+                                        <td>{{ $instagramAccount->media()->count() ? $instagramAccount->media()->first()->created_at : '' }}</td>
                                         <td>
                                             <a
                                                 href="{{ route('instagram_account.edit', ['instagram_account' => $instagramAccount->id]) }}"

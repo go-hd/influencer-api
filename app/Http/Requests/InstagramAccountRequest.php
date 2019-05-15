@@ -52,7 +52,7 @@ class InstagramAccountRequest extends FormRequest
     {
         return [
             'required' => ':attributeは必須項目です。',
-            'string' => ':attributeは文字列を入力してください。',
+            'string' => ':attributeには文字列を入力してください。',
             'label.regex' => ':attributeはアルファベットの小文字、数値、アンダーバー（_）、ハイフン（-）の組み合わせで入力してください。',
             'ig_business_id.regex' => ':attributeは17桁の数値です。',
             'unique' => ':attribute":input"はすでに使用されています。'

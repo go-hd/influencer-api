@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Auth::routes();
 
@@ -21,6 +21,21 @@ Route::get(
     '/home',
     'HomeController@index'
 )->name('home');
+
+Route::get(
+    '/user/edit',
+    'UserController@edit'
+)->name('user.edit')->middleware('auth');
+
+Route::put(
+    '/user',
+    'UserController@update'
+)->name('user.update')->middleware('auth');
+
+Route::delete(
+    '/user',
+    'UserController@destroy'
+)->name('user.destroy')->middleware('auth');
 
 Route::resource(
     'instagram_account',
@@ -36,5 +51,3 @@ Route::resource(
     'medium',
     'MediumController'
 )->only(['update']);
-
-// Route::get('media/{user}/{label}', 'MediumController@index');
