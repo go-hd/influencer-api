@@ -15,7 +15,7 @@ class InstagramAccountRequest extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->id === $this->route('instagram_account')->user_id;
+        return is_null($this->route('instagram_account')) || \Auth::user()->id === $this->route('instagram_account')->user_id;
     }
 
     /**
