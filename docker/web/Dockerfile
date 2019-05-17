@@ -23,3 +23,4 @@ RUN composer self-update
 RUN composer global require hirak/prestissimo
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
+CMD ["cron", "-f"]
