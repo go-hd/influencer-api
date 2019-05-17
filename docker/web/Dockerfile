@@ -15,11 +15,11 @@ RUN rm /etc/apache2/sites-available/000-default.conf
 COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2ensite 000-default.conf
 
+RUN echo '* * * * * root cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1' >> /etc/crontab
+
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 RUN composer self-update
 RUN composer global require hirak/prestissimo
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
-
-RUN echo '* * * * * root cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1' >> /etc/crontab
