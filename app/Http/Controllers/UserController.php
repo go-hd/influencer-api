@@ -9,7 +9,6 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit()
@@ -20,20 +19,18 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \App\Http\Requests\UserRequest $request
+     * @param  \App\Http\Requests\UserRequest $request
      * @return \Illuminate\Http\Response
      */
     public function update(UserRequest $request)
     {
-        $result = \Auth::user()->fill($request->all())->save();
+        $result = \Auth::user()->update($request->all());
 
-        if ($result) {
-            \Session::flash('status', 'success');
-            \Session::flash('message', "アカウント情報を更新しました。");
-        } else {
-            \Session::flash('status', 'danger');
-            \Session::flash('message', "アカウント情報の更新に失敗しました。");
-        }
+        $this->flashResult(
+            $result,
+            "アカウント情報を更新しました。",
+            "アカウント情報の更新に失敗しました。"
+        );
 
         return redirect()->route('home');
     }
@@ -45,18 +42,12 @@ class UserController extends Controller
      */
     public function destroy()
     {
-        $user = \Auth::user();
         \Auth::logout();
+        $result = \Auth::user()->delete();
 
-        try {
-            foreach ($user->instagramAccounts as $instagramAccount) {
-                $instagramAccount->media()->delete();
-            }
-            $user->instagramAccounts()->delete();
-            $user->delete();
-        } catch (\Exception $e) {
+        if (!$result) {
             abort(500, 'ユーザーの削除中にエラーが発生しました。');
-        }
+        };
 
         return redirect()->route('welcome');
     }

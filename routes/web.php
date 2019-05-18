@@ -17,37 +17,43 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get(
-    '/home',
-    'HomeController@index'
-)->name('home');
+Route::group(['middleware' => 'auth'], function () {
+    // Home
+    Route::get(
+        '/home',
+        'HomeController@index'
+    )->name('home');
 
-Route::get(
-    '/user/edit',
-    'UserController@edit'
-)->name('user.edit')->middleware('auth');
+    // Account settings
+    Route::get(
+        '/user/edit',
+        'UserController@edit'
+    )->name('user.edit');
 
-Route::put(
-    '/user',
-    'UserController@update'
-)->name('user.update')->middleware('auth');
+    Route::put(
+        '/user',
+        'UserController@update'
+    )->name('user.update');
 
-Route::delete(
-    '/user',
-    'UserController@destroy'
-)->name('user.destroy')->middleware('auth');
+    Route::delete(
+        '/user',
+        'UserController@destroy'
+    )->name('user.destroy');
 
-Route::resource(
-    'instagram_account',
-    'InstagramAccountController'
-)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    // Instagram accounts
+    Route::resource(
+        'instagram_account',
+        'InstagramAccountController'
+    )->only(['create', 'store', 'edit', 'update', 'destroy']);
 
-Route::post(
-    '/instagram_account/{instagram_account}/update_media',
-    'InstagramAccountController@updateMedia'
-)->name('instagram_account.update_media');
+    Route::post(
+        '/instagram_account/{instagram_account}/update_media',
+        'InstagramAccountController@updateMedia'
+    )->name('instagram_account.update_media');
 
-Route::resource(
-    'medium',
-    'MediumController'
-)->only(['update']);
+    // Media
+    Route::resource(
+        'medium',
+        'MediumController'
+    )->only(['update']);
+});

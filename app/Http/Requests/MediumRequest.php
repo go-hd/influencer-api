@@ -13,9 +13,7 @@ class MediumRequest extends FormRequest
      */
     public function authorize()
     {
-        /** @var \App\Medium $medium */
-        $medium = $this->route('medium');
-        return \Auth::user()->id === $medium->instagramAccount->user->id;
+        return \Auth::user()->id === $this->route('medium')->instagramAccount->user->id;
     }
 
     /**

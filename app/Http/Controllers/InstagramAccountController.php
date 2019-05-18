@@ -8,25 +8,6 @@ use App\InstagramAccount;
 class InstagramAccountController extends Controller
 {
     /**
-     * The model instance of Instagram account.
-     *
-     * @var \App\InstagramAccount
-     */
-    protected $instagramAccount;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct(InstagramAccount $instagramAccount)
-    {
-        $this->instagramAccount = $instagramAccount;
-
-        $this->middleware('auth');
-    }
-
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -39,32 +20,19 @@ class InstagramAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\InstagramAccountRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(InstagramAccountRequest $request)
     {
-        $data = $request->all();
-        $data['user_id'] = \Auth::user()->id;
+        $name = $request->get('name');
+        $result = InstagramAccount::create($request->all());
 
-        try {
-            $result = \DB::transaction(function () use ($data) {
-                return $this->instagramAccount->fill($data)->save()
-                    && $this->instagramAccount->updateMedia();
-            });
-        } catch (\Exception $exception) {
-            $result = false;
-        } catch (\Throwable $e) {
-            $result = false;
-        }
-
-        if ($result) {
-            \Session::flash('status', 'success');
-            \Session::flash('message', "{$data['name']}を追加しました。");
-        } else {
-            \Session::flash('status', 'danger');
-            \Session::flash('message', "Instagramアカウントの追加に失敗しました。");
-        }
+        $this->flashResult(
+            $result,
+            "{$name}を追加しました。",
+            "Instagramアカウントの追加に失敗しました。"
+        );
 
         return redirect()->route('home');
     }
@@ -72,7 +40,7 @@ class InstagramAccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\InstagramAccount  $instagramAccount
+     * @param  \App\InstagramAccount $instagramAccount
      * @return \Illuminate\Http\Response
      */
     public function edit(InstagramAccount $instagramAccount)
@@ -83,30 +51,20 @@ class InstagramAccountController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\InstagramAccount  $instagramAccount
+     * @param  \App\Http\Requests\InstagramAccountRequest $request
+     * @param  \App\InstagramAccount $instagramAccount
      * @return \Illuminate\Http\Response
      */
     public function update(InstagramAccountRequest $request, InstagramAccount $instagramAccount)
     {
-        try {
-            $result = \DB::transaction(function () use ($request, $instagramAccount) {
-                return $instagramAccount->fill($request->all())->save()
-                    && $instagramAccount->updateMedia();
-            });
-        } catch (\Exception $exception) {
-            $result = false;
-        } catch (\Throwable $e) {
-            $result = false;
-        }
+        $result = $instagramAccount->update($request->all());
+        $name = $instagramAccount->name;
 
-        if ($result) {
-            \Session::flash('status', 'success');
-            \Session::flash('message', "{$request->get('name')}の情報を更新しました。");
-        } else {
-            \Session::flash('status', 'danger');
-            \Session::flash('message', "Instagramアカウントの更新に失敗しました。");
-        }
+        $this->flashResult(
+            $result,
+            "{$name}の情報を更新しました。",
+            "Instagramアカウントの更新に失敗しました。"
+        );
 
         return redirect()->back();
     }
@@ -114,29 +72,19 @@ class InstagramAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\InstagramAccount  $instagramAccount
+     * @param  \App\InstagramAccount $instagramAccount
      * @return \Illuminate\Http\Response
      */
     public function destroy(InstagramAccount $instagramAccount)
     {
-        try {
-            $result = \DB::transaction(function () use (&$result, $instagramAccount) {
-                return $instagramAccount->media()->delete()
-                    && $instagramAccount->delete();
-            });
-        } catch (\Exception $exception) {
-            $result = false;
-        } catch (\Throwable $e) {
-            $result = false;
-        }
+        $name = $instagramAccount->name;
+        $result = $instagramAccount->delete();
 
-        if ($result) {
-            \Session::flash('status', 'success');
-            \Session::flash('message', "{$instagramAccount->name}の削除に成功しました。");
-        } else {
-            \Session::flash('status', 'danger');
-            \Session::flash('message', "{$instagramAccount->name}の削除に失敗しました。");
-        }
+        $this->flashResult(
+            $result,
+            "{$name}の削除に成功しました。",
+            "{$name}の削除に失敗しました。"
+        );
 
         return redirect()->route('home');
     }
@@ -144,19 +92,19 @@ class InstagramAccountController extends Controller
     /**
      * Update the media of this Instagram account.
      *
+     * @param  \App\InstagramAccount $instagramAccount
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateMedia(InstagramAccount $instagramAccount)
     {
+        $name = $instagramAccount->name;
         $result = $instagramAccount->updateMedia();
 
-        if ($result) {
-            \Session::flash('status', 'success');
-            \Session::flash('message', "最新の{$instagramAccount->name}のポストを取得しました。");
-        } else {
-            \Session::flash('status', 'danger');
-            \Session::flash('message', "最新のポストの取得に失敗しました。");
-        }
+        $this->flashResult(
+            $result,
+            "最新の{$name}のポストを取得しました。",
+            "最新のポストの取得に失敗しました。"
+        );
 
         return redirect()->back();
     }

@@ -59,7 +59,7 @@ class InstagramAccount extends Model
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array  $attributes
+     * @param  array $attributes
      * @return void
      */
     public function __construct(array $attributes = [])
@@ -89,6 +89,27 @@ class InstagramAccount extends Model
     }
 
     /**
+     * Search media by query this Instagram account has.
+     *
+     * @param  array $attribute
+     * @return \Illuminate\Support\Collection
+     */
+    public function searchMedia(array $attribute): Collection
+    {
+        $query = $this->media()->where('omit', 0);
+
+        if (!empty($attribute['contains'])) {
+            $query->where('caption', 'like', '%' . $attribute['contains'] . '%');
+        }
+
+        if (!empty($attribute['omit'])) {
+            $query->where('caption', 'not like', '%' . $attribute['omit'] . '%');
+        }
+
+        return $query->get();
+    }
+
+    /**
      * Update the media of this Instagram account.
      *
      * @return bool
@@ -97,7 +118,9 @@ class InstagramAccount extends Model
     {
         $timestamp = date('Y-m-d H:i:s');
         $omittedMedia = $this->media()->where('omit', true)->get()
-            ->map(function (Medium $medium) {return $medium['media_id'];});
+            ->map(function (Medium $medium) {
+                return $medium['media_id'];
+            });
 
         $this->media()->delete();
 
@@ -121,7 +144,7 @@ class InstagramAccount extends Model
     /**
      * Fetch current media from Instagram Graph API.
      *
-     * @param array $columns
+     * @param  array $columns
      * @return \Illuminate\Support\Collection
      */
     protected function getCurrentMedia(array $columns): Collection
@@ -135,7 +158,7 @@ class InstagramAccount extends Model
     /**
      * Get the URL of Instagram Graph API.
      *
-     * @param array $columns
+     * @param  array $columns
      * @return string
      */
     protected function getCurrentMediaUrl(array $columns): string
@@ -145,5 +168,74 @@ class InstagramAccount extends Model
         return "https://graph.facebook.com/v3.0/{$this->ig_business_id}" .
             "?fields=media{{$columnsQuery}}" .
             "&access_token={$this->page_access_token}";
+    }
+
+    /**
+     * Create a new Instagram account and fetch the media this account has.
+     *
+     * @param  array $attributes
+     * @return bool
+     */
+    static public function create(array $attributes): bool
+    {
+        $attributes['user_id'] = \Auth::user()->id;
+
+        try {
+            $result = \DB::transaction(function () use ($attributes) {
+                $instance = new static($attributes);
+                return $instance->save()
+                    && $instance->updateMedia();
+            });
+        } catch (\Exception $exception) {
+            $result = false;
+        } catch (\Throwable $e) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Delete this Instagram account and the media this account has.
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        try {
+            $result = \DB::transaction(function () {
+                return $this->media()->delete()
+                    && parent::delete();
+            });
+        } catch (\Exception $exception) {
+            $result = false;
+        } catch (\Throwable $e) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Update the Instagram account and fetch the media this account has.
+     *
+     * @param  array $attributes
+     * @param  array $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = []): bool
+    {
+        try {
+            $result = \DB::transaction(function () use ($attributes, $options) {
+                return parent::update($attributes, $options)
+                    && $this->updateMedia();
+            });
+        } catch (\Exception $exception) {
+            $result = false;
+        } catch (\Throwable $e) {
+            $result = false;
+        }
+
+        return $result;
     }
 }

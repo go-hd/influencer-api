@@ -45,7 +45,7 @@ class Medium extends Model
      *
      * @var array
      */
-    protected $hidden = ['omit', 'created_at', 'updated_at'];
+    protected $hidden = ['id', 'omit', 'created_at', 'updated_at'];
 
     /**
      * Get the Instagram account this media belongs to.

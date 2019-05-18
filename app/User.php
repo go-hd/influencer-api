@@ -72,4 +72,41 @@ class User extends Authenticatable
     {
         return $this->hasMany(InstagramAccount::class);
     }
+
+    /**
+     * Find registered Instagram account by label.
+     *
+     * @param  string $label
+     * @return \App\InstagramAccount|null
+     */
+    public function findInstagramAccountByLabel(string $label): ?InstagramAccount
+    {
+        return $this->instagramAccounts->where('label', $label)->first();
+    }
+
+    /**
+     * Delete this user and any contents this user has.
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        try {
+            $result = \DB::transaction(function () {
+                $subStatus = true;
+
+                foreach ($this->instagramAccounts as $instagramAccount) {
+                    $subStatus &= $instagramAccount->media()->delete();
+                }
+
+                return $subStatus
+                    && $this->instagramAccounts()->delete()
+                    && parent::delete();
+            });
+        } catch (\Throwable $e) {
+            $result = false;
+        }
+
+        return $result;
+    }
 }
